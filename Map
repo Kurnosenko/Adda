@@ -1,0 +1,64 @@
+#include <iostream>
+#include <unordered_map>
+#include <string>
+
+using namespace std;
+ 
+int getIntegerValue(string s, int b)
+{
+    unordered_map<char, int> mapping = {
+        {'I', 1}, {'V', 5}, {'X', 10}, {'L', 50}, {'C', 100}, {'D', 500}, {'M', 1000}, {'N', 0}
+    };
+    
+    unordered_map<int, char> revers_mapping = {
+        {1, 'I'}, {5, 'V'}, {10, 'X'}, {50, 'L'}, {100, 'C'}, {500, 'D'}, {1000, 'M'}, {0, 'N'}
+    };
+    
+    int value = 0;
+    char value_rev[256];
+ 
+    for (int i = 0; i < s.length(); i++)
+    {
+        if (i + 1 < s.length() && mapping[s[i]] < mapping[s[i + 1]]) {
+            value -= mapping[s[i]];
+        }
+        else {
+            value += mapping[s[i]];
+        }
+    }
+    int cnt = 0;
+    while(b)
+    {
+        int curr = b % 10;
+        b /= 10;
+        for(int i = 0; i < cnt; ++i)
+        {
+            curr *= 10;
+        }
+        cout << revers_mapping.at(curr) << "\n";
+        ++cnt;
+        //cout << curr << endl;
+    }
+    cout << value_rev;
+ 
+    return value;//value_rev;
+}
+
+
+ 
+int main()
+{
+    string s;
+    int b;
+    cin >> s;
+    cin >> b;
+    char b_c[5];
+    string b_s[5];
+    /*for(int i = 0; i < 5; i++){
+        cin >> b_s[i];
+        b_c[i] = b_s[i][0];
+    }*/
+    cout << getIntegerValue(s, b);
+ 
+    return 0;
+}
