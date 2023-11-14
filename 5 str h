@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+int calculateStringLength(char arr[]) {
+    int count = 0;
+    while (arr[count] != '\0') {
+        count++;
+    }
+    return count;
+}
+
+int main() {
+    char charArray[] = "Hello, World!";
+    int length = calculateStringLength(charArray);
+    printf("Length of the char array: %d\n", length);
+    return 0;
+}
