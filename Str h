@@ -1,0 +1,27 @@
+#include <iostream>
+
+const char* findCharacter(const char* str, char target) {
+    while (*str != '\0') {
+        if (*str == target) {
+            return str; // Character found, return pointer to it
+        }
+        str++; // Move to the next character
+    }
+
+    return nullptr; // Character not found, return nullptr
+}
+
+int main() {
+    const char myString[] = "Hello, World!";
+    char target = 'o';
+
+    const char* result = findCharacter(myString, target);
+
+    if (result != nullptr) {
+        std::cout << "Character found at position: " << (result - myString+1) << std::endl;
+    } else {
+        std::cout << "Character not found." << std::endl;
+    }
+
+    return 0;
+}
