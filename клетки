@@ -1,0 +1,113 @@
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <thread>
+
+using namespace std;
+
+// Функция для печати состояния поля
+void printField(const vector<vector<char>>& field, int generation) {
+    system("clear"); // Очистка экрана (работает в UNIX-подобных системах)
+    cout << "Generation: " << generation << endl;
+    for (const auto& row : field) {
+        for (char cell : row) {
+            cout << cell << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Функция для проверки соседей
+int countNeighbors(const vector<vector<char>>& field, int x, int y) {
+    int count = 0;
+    int rows = field.size();
+    int cols = field[0].size();
+
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            int neighborX = x + i;
+            int neighborY = y + j;
+
+            if (i == 0 && j == 0) continue; // Игнорируем текущую клетку
+            if (neighborX >= 0 && neighborX < rows && neighborY >= 0 && neighborY < cols) {
+                if (field[neighborX][neighborY] == 'O') {
+                    ++count;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+// Функция для обновления состояния поля
+void updateField(vector<vector<char>>& field) {
+    int rows = field.size();
+    int cols = field[0].size();
+    vector<vector<char>> newField = field;
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            int neighbors = countNeighbors(field, i, j);
+
+            if (field[i][j] == 'O') {
+                if (neighbors < 2 || neighbors > 3) {
+                    newField[i][j] = ' '; // Умирает из-за перенаселения или изоляции
+                }
+            } else {
+                if (neighbors == 3) {
+                    newField[i][j] = 'O'; // Рождается новая клетка
+                }
+            }
+        }
+    }
+
+    field = newField;
+}
+
+int main() {
+    // Начальное состояние поля
+    vector<vector<char>> initialState = {
+        {'O', 'O', 'O', ' ', ' '},
+        {'O', ' ', ' ', 'O', 'O'},
+        {'O', 'O', 'O', ' ', ' '},
+        {' ', ' ', ' ', ' ', ' '},
+        {' ', ' ', ' ', ' ', ' '}
+    };
+
+    // Задаем размеры поля (можно запросить у пользователя)
+    int rows = 5;
+    int cols = 5;
+
+    // Создаем поле заданных размеров и заполняем его начальным состоянием
+    vector<vector<char>> field(rows, vector<char>(cols, ' '));
+    for (int i = 0; i < initialState.size(); ++i) {
+        for (int j = 0; j < initialState[i].size(); ++j) {
+            field[i][j] = initialState[i][j];
+        }
+    }
+
+    int generation = 0;
+    bool stable = false;
+
+    // Основной цикл игры
+    while (!stable) {
+        printField(field, generation);
+
+        vector<vector<char>> prevField = field;
+        updateField(field);
+
+        // Проверяем на стабильность
+        if (prevField == field) {
+            stable = true;
+            break;
+        }
+
+        // Пауза между генерациями (можно уменьшить для более быстрой игры)
+        this_thread::sleep_for(chrono::milliseconds(500));
+        ++generation;
+    }
+
+    cout << "Game over! All cells died or the state became stable." << endl;
+
+    return 0;
+}
